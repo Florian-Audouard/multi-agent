@@ -14,6 +14,7 @@ interface Message {
   role: 'user' | 'assistant';
   content: string;
   toolCalls?: ToolCall[];
+  toolHistory?: string[];
 }
 
 function App() {
@@ -117,6 +118,8 @@ function App() {
                     return tc;
                   })
                 };
+              } else if (data.type === 'history') {
+                return { ...msg, toolHistory: data.tools };
               }
               return msg;
             }));
@@ -242,6 +245,17 @@ function App() {
                     <span key={i}>{line}<br /></span>
                   ))}
                 </div>
+
+                {msg.toolHistory && msg.toolHistory.length > 0 && (
+                  <div className="tool-history-summary">
+                    <div className="tool-history-title">📋 Tools used in this run:</div>
+                    <div className="tool-history-list">
+                      {msg.toolHistory.map((toolName, idx) => (
+                        <span key={idx} className="tool-history-badge">{toolName}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
              </div>
           ))}

@@ -1,7 +1,7 @@
 from langchain.tools.tool_node import ToolCallRequest
 from langchain.agents.middleware import AgentMiddleware
 from langchain.messages import ToolMessage
-from typing import Callable, Union, Awaitable
+from typing import Callable, Awaitable
 
 class AgentLoggingMiddleware(AgentMiddleware):
     def wrap_tool_call(
