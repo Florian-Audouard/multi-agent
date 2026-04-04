@@ -15,9 +15,8 @@ from langchain_mcp_adapters.client import MultiServerMCPClient
 from langgraph.checkpoint.memory import InMemorySaver
 from langchain.agents.middleware import HumanInTheLoopMiddleware
 from typing import Optional, Dict, Any
-from typing_extensions import TypedDict
-from langchain_core.messages import AnyMessage
-from langgraph.graph.message import add_messages
+
+from langchain.agents import AgentState
 
 memory = InMemorySaver()
 
@@ -26,11 +25,11 @@ from middleware.history import HistoryMiddleware
 from middleware.logging import AgentLoggingMiddleware
 
 
+
 # Define agent state schema with tool_history
 import operator
 
-class AgentState(TypedDict):
-    messages: Annotated[list[AnyMessage], add_messages]
+class CustomAgentState(AgentState):
     tool_history: Annotated[list[str], operator.add]
 
 # Initialize MCP Client
@@ -73,7 +72,7 @@ async def init_agent(force_refresh: bool = False):
         agent = create_agent(
             llm,
             tools,
-            state_schema=AgentState,
+            state_schema=CustomAgentState,
             middleware=[HistoryMiddleware(), AgentLoggingMiddleware(), hitl_middleware],
             checkpointer=memory,
         )
